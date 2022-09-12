@@ -1,6 +1,6 @@
 # --------------------------- Debugging Environment -------------------------- #
 FROM node:18-alpine3.15 as debug
-WORKDIR /education/BackEnd
+WORKDIR /notification
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
