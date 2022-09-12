@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+/* ----------------- Set all .env variables in "appConfigs" ----------------- */
+
+require("../configs");
+/**
+ * Module dependencies.
+ */
+require("app-module-path").addPath(__dirname);
+
+const app = require("../app");
+const { databaseConnection } = require("../db/mongo");
+const debug = require("debug")("panel:server");
+const fs = require("fs");
+/**
+ * Create HTTP server.
+ */
+let server = null;
+if (appConfigs.APP_PROTOCOL === "http") {
+    const http = require("http");
+    server = http.createServer(app);
+} else {
+    const https = require("https");
+    server = https.createServer(
+        {
+            key: fs.readFileSync(appConfigs.HTTPS_KEY_FILE),
+            cert: fs.readFileSync(appConfigs.HTTPS_CERT_FILE),
+        },
+        app
+    );
+}
+
+// Database
+databaseConnection()
+    .then(() => console.log("DB Connected."))
+    .catch((error) => console.log(error.message));
+
+
+/**
+ * Get port from environment and store in Express.
+ */
+const PORT = normalizePort(appConfigs.APP_PORT || "3000");
+app.set("port", PORT);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+server.listen(PORT, () =>
+    console.log(
+        `[+] server started at: ${appConfigs.APP_PROTOCOL}://${appConfigs.APP_HOST}:${PORT}`
+    )
+);
+server.on("error", onError);
+server.on("listening", onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+function normalizePort(val) {
+    const port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+function onError(error) {
+    if (error.syscall !== "listen") {
+        throw error;
+    }
+
+    const bind = typeof PORT === "string" ? "Pipe " + PORT : "Port " + PORT;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case "EACCES":
+            console.error(bind + " requires elevated privileges");
+            process.exit(1);
+            break;
+        case "EADDRINUSE":
+            console.error(bind + " is already in use");
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+function onListening() {
+    const addr = server.address();
+    const bind =
+        typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+    debug("Listening on " + bind);
+}

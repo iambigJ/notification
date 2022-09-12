@@ -1,0 +1,80 @@
+version: '3.5'
+services:
+
+  # # --------------------------------- nginx: --------------------------------- #
+  #   nginx:
+  #     image: nginx:1.23.1-alpine
+  #     restart: always # options are [always | no | unless-stopped | on-failure[:max-retries] ] 
+  #     container_name: nginx
+  #     networks:
+  #       - akam-node-template-network
+  #     volumes:
+  #       - /etc/localtime:/etc/localtime:ro
+  #       - ./nginx.conf:/etc/nginx/nginx.conf
+  #     ports:
+  #       - 80:80
+
+  # ---------------------------------- redis ------------------------------------ 
+  #   redis:
+  #     container_name: redis
+  #     image: redis:6.2-alpine
+  #     restart: always
+  #     env_file:
+  #     - ./.env
+  #     networks:
+  #       - akam-node-template-network
+  #     expose:
+  #       - '6379'
+  #     command: redis-server --save 20 1 --loglevel warning
+  #     # ports:
+  #     #   - '6379:6379'
+
+  # ----------------------------------- Mongo -----------------------------------
+  education-db:
+    image: mongo:5.0
+    container_name: education-db
+    restart: unless-stopped
+    volumes:
+      # - ./___database:/data/db
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    networks:
+      - hamsaz-backend-network
+
+  # --------------------------------- Backend -------------------------------- 
+  education-app:
+    container_name: education-app
+    image: education-app:v1
+    build:
+      context: ./
+      target: debug
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    # depends_on:
+    #   - redis
+    #   - mysql
+    networks:
+      - hamsaz-backend-network
+    volumes:
+      - ./:/education/BackEnd
+      - /education/BackEnd/node_modules # we need to include our project in volumes in order to debug it
+    ports:
+      - 3032:3032
+      # - 9229:9229 # this port is for vscode debugger tool
+
+      # add external network name if you want your all containers can access to one network
+      # networks:
+      #   external network name:   
+      #     external: true
+
+networks:
+  hamsaz-backend-network:
+
+
+volumes:
+  mongo_data:
