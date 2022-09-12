@@ -20,12 +20,6 @@ const app = express();
 
 /* ----------------------------- SET FIRST USER ----------------------------- */
 const mongoose = require('mongoose')
-const User = require("./models/User")
-app.use(async (req, res, next) => {
-    const user = await User.findOne({ mobile: '09148876040' })
-    req.user = user
-    next()
-})
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

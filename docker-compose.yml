@@ -48,7 +48,7 @@ services:
       - ./:/notification
       - /notification/node_modules # we need to include our project in volumes in order to debug it
     ports:
-      - 3032:3032
+      - 3050:3050
       # - 9229:9229 # this port is for vscode debugger tool
 
       # add external network name if you want your all containers can access to one network

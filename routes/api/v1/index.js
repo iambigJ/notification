@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
-// const user = require('./user')
+const notification = require('./notification')
 
 // /* ----------------------------- prifix: /api/v1 ---------------------------- */
-// router.use('/user', user)
+router.use('/notification', notification)
 
 module.exports = router
