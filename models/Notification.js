@@ -3,16 +3,18 @@ const mongoose = require("mongoose")
 const schema = mongoose.Schema
 
 const notificationSchema = schema({
-    userId: {
-        type: String
+    users: {
+        id: {
+            type: String
+        },
+        email: {
+            type: String
+        }
     },
-    messageType: {
+    type: {
         type: String,
         enum: ['email', 'push_notification', 'inside_message'],
         default: 'inside_message'
-    },
-    email: {
-        type: String
     },
     push_message: {
         type: String
@@ -40,4 +42,6 @@ const notificationSchema = schema({
     timestamps: true,
     collection: 'notification'
 })
+
+
 module.exports = mongoose.model('Notification', notificationSchema);
