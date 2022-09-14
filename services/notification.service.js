@@ -5,8 +5,32 @@ const main = require('../tools/sendEmail.tools')
 
 /* ----------------------------- GET MESSAGES LIST ----------------------------- */
 exports.geMessageslist_Services = async (queries) => {
-
-    const getNotification = await Notification.find()
+    const match = {}
+    if (queries.id) {
+        match['users.id'] = queries.id
+    }
+    if (queries.email) {
+        match.email = { $regex: queries.email }
+    }
+    if (queries.type) {
+        match.type = queries.type
+    }
+    if (queries.seen) {
+        match.seen = queries.seen
+    }
+    if (queries.sent) {
+        match.sent = queries.sent
+    }
+    if (queries.fromDate) {
+        match.createdAt = { $gte: new Date(queries.fromDate) }
+    }
+    if (queries.toDate) {
+        match.createdAt = { $lte: new Date(queries.toDate) }
+    }
+    if (queries.fromDate && queries.toDate) {
+        match.createdAt = { $gte: new Date(queries.fromDate), $lte: new Date(queries.toDate) }
+    }
+    const getNotification = await Notification.find(match)
     return getNotification
 }
 
@@ -14,7 +38,6 @@ exports.geMessageslist_Services = async (queries) => {
 exports.addNewNotification_Services = async (informationBodyTaken) => {
     var newUserIdList = []
     var newUserListForSaveInDatabase = []
-
     // type was email
     if (informationBodyTaken.type === "email") {
         var emails = []
@@ -30,13 +53,13 @@ exports.addNewNotification_Services = async (informationBodyTaken) => {
         return main(emailData)
             .then(async res => {
                 for (user of informationBodyTaken.users) {
-                    newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email }, isSent: new Date() })
+                    newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email }, sent_date: new Date(), sent: true })
                 }
                 await Notification.insertMany(newUserListForSaveInDatabase)
                 return newUserIdList
             })
             .catch(async err => {
-                console.log(err.message)
+                console.log(err)
                 for (user of informationBodyTaken.users) {
                     newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
                 }

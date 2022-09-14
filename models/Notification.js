@@ -16,19 +16,24 @@ const notificationSchema = schema({
         enum: ['email', 'push_notification', 'inside_message'],
         default: 'inside_message'
     },
-    push_message: {
-        type: String
-    },
     message: {
         type: String
     },
-    isSent: {
+    sent_date: {
+        type: Date,
+        default: null
+    },
+    sent: {
+        type: Boolean,
+        default: false
+    },
+    seen_date: {
         type: Date,
         default: null
     },
     seen: {
-        type: Date,
-        default: null
+        type: Boolean,
+        default: false
     },
     push_notification_service: {
         type: String,
