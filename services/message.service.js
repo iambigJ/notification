@@ -1,7 +1,10 @@
 const Notification = require('../models/Notification')
+const InsideMessages = require('../models/InsideMessages')
+const EmailMessages = require('../models/EmailMessages')
 const ErrorResult = require('../tools/error.tool')
 const main = require('../tools/sendEmail.tools')
-const webPush = require("web-push")
+const { pushNotification } = require('../tools/pushNotification.tools')
+const { query } = require('express')
 
 
 /* ----------------------------- GET MESSAGES LIST ----------------------------- */
@@ -13,9 +16,9 @@ exports.geMessageslist_Services = async (queries) => {
     if (queries.email) {
         match.email = { $regex: queries.email }
     }
-    if (queries.type) {
-        match.type = queries.type
-    }
+    // if (queries.type) {
+    //     match.type = queries.type
+    // }
     if (queries.seen) {
         match.seen = queries.seen
     }
@@ -31,12 +34,23 @@ exports.geMessageslist_Services = async (queries) => {
     if (queries.fromDate && queries.toDate) {
         match.createdAt = { $gte: new Date(queries.fromDate), $lte: new Date(queries.toDate) }
     }
-    const getNotification = await Notification.find(match)
-    return getNotification
+    if (queries.type === "inside_message") {
+        const getMessages = await InsideMessages.find(match)
+        return getMessages
+    }
+    if (queries.type === "email") {
+        const getMessages = await EmailMessages.find(match)
+        return getMessages
+    }
+    if (queries.type === "push_notification") {
+        const getMessages = await Notification.find(match)
+        return getMessages
+    }
+    return "لطفا یکی از تایپ های مورد نظر را انتخاب کنید"
 }
 
 /* -------------------------- SEND MESSAGE TO USER -------------------------- */
-exports.addNewNotification_Services = async (informationBodyTaken) => {
+exports.addNewMessage_Services = async (informationBodyTaken) => {
     var newUserIdList = []
     var newUserListForSaveInDatabase = []
     // type was email
@@ -56,7 +70,7 @@ exports.addNewNotification_Services = async (informationBodyTaken) => {
                 for (user of informationBodyTaken.users) {
                     newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email }, sent_date: new Date(), sent: true })
                 }
-                await Notification.insertMany(newUserListForSaveInDatabase)
+                await EmailMessages.insertMany(newUserListForSaveInDatabase)
                 return newUserIdList
             })
             .catch(async err => {
@@ -64,35 +78,23 @@ exports.addNewNotification_Services = async (informationBodyTaken) => {
                 for (user of informationBodyTaken.users) {
                     newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
                 }
-                await Notification.insertMany(newUserListForSaveInDatabase)
+                await EmailMessages.insertMany(newUserListForSaveInDatabase)
                 return newUserIdList
             })
     }
     // type is push_notification
     if (informationBodyTaken.type === "push_notification") {
 
-        const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
-        const privateVapidKeys = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
-
-        webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
-        const subscription = {
-            endpoint: 'https://fcm.googleapis.com/fcm/send/c0jOOjEkMkU:APA91bHZS9tTL3g_ukGTebpWG133WFAKXHh9qQz9y3G3dBcKiSJZ_V_tJpLlXnjlVevexICt61UJmwu9K6WpLJTlEMn0CM77P8gyLkt1lYpEd7TpD5mf7t1xOkjj_ANmehliCbvuS_CN',
-            expirationTime: null,
-            keys: {
-                auth: 'lkgP9MU7Gd_TP36O_4UJdg',
-                p256dh: 'BP4y-b-YUS3C8B4e3Sz3UPvxMIOyOFkO3IxSeMR4pmoDkWokmqj_qQkrBuDOJhrfOYr4Vdbwv5XSP1uCGj8ydds',
-            },
-            headers: {
-                "content-type": "application/json"
-            }
-        };
-        const payload = JSON.stringify({
-            title: "New Product From Aka",
-        })
-        webPush.sendNotification(subscription, payload).catch(err => {
-            console.log(err)
-        })
+        pushNotification()
         return 'ok'
+    }
+    // type is inside_message
+    if (informationBodyTaken.type === "inside_message") {
+        for (user of informationBodyTaken.users) {
+            newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
+        }
+        const response = await InsideMessages.insertMany(newUserListForSaveInDatabase)
+        return response
     }
 
 }

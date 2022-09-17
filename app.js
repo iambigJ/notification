@@ -39,15 +39,12 @@ app.use(cors());
 
 /* -------------------------------- Web Push -------------------------------- */
 app.use(express.static(path.join(__dirname, './client')))
-let subscriptions;
-app.post('/api/subscribe', async (req, res) => {
+app.post('/', async (req, res) => {
     const subscription = req.body
-    subscriptions = subscription
+    appConfigs.auth = subscription.keys.auth
+    appConfigs.endpoint = subscription.endpoint
+    appConfigs.p256dh = subscription.keys.p256dh
     res.status(200).json(subscription)
-
-})
-app.get('/api/endpoint', (req, res) => {
-    res.json({ data: subscriptions })
 })
 
 // console.log(webPush.generateVAPIDKeys())

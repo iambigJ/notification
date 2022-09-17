@@ -1,23 +1,17 @@
 const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI';
 
 
-if (!('serviceWorker' in navigator)) {
-    throw new Error('No Service Worker support!')
+
+const check = () => {
+    if (!('serviceWorker' in navigator)) {
+        throw new Error('No Service Worker support!')
+    }
+    if (!('PushManager' in window)) {
+        throw new Error('No Push API Support!')
+    }
 }
-// const check = () => {
-//     if (!('serviceWorker' in navigator)) {
-//         throw new Error('No Service Worker support!')
-//     }
-//     if (!('PushManager' in window)) {
-//         throw new Error('No Push API Support!')
-//     }
-// }
+check()
 
-// const main = () => {
-//     check()
-// }
-
-// main()
 async function send() {
     //register service worker
     const register = await navigator.serviceWorker.register('/worker.js', {
@@ -34,7 +28,7 @@ async function send() {
     console.log("sending push...")
 
     //Send push notification
-    await fetch("/api/subscribe", {
+    await fetch("/", {
         // await fetch("/api/v1/notification", {
         method: "POST",
         body: JSON.stringify(subscription),
