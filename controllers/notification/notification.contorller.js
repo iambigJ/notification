@@ -36,7 +36,6 @@ exports.doAddNewNotificationPOST_Controller = async (req, res) => {
         message,
         push_notification_service,
         push_notification_token
-
     } = req.body
     const informationBodyTaken = {
         users,
@@ -46,11 +45,11 @@ exports.doAddNewNotificationPOST_Controller = async (req, res) => {
         push_notification_service,
         push_notification_token
     }
-    for (user of users) {
-        if (!user.id) {
-            throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
-        }
-    }
+    // for (user of users) {
+    //     if (!user.id) {
+    //         throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
+    //     }
+    // }
     // if (!userId) {
     //     throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
     // }

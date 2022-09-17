@@ -1,6 +1,7 @@
 const Notification = require('../models/Notification')
 const ErrorResult = require('../tools/error.tool')
 const main = require('../tools/sendEmail.tools')
+const webPush = require("web-push")
 
 
 /* ----------------------------- GET MESSAGES LIST ----------------------------- */
@@ -66,6 +67,32 @@ exports.addNewNotification_Services = async (informationBodyTaken) => {
                 await Notification.insertMany(newUserListForSaveInDatabase)
                 return newUserIdList
             })
+    }
+    // type is push_notification
+    if (informationBodyTaken.type === "push_notification") {
+
+        const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
+        const privateVapidKeys = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
+
+        webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
+        const subscription = {
+            endpoint: 'https://fcm.googleapis.com/fcm/send/c0jOOjEkMkU:APA91bHZS9tTL3g_ukGTebpWG133WFAKXHh9qQz9y3G3dBcKiSJZ_V_tJpLlXnjlVevexICt61UJmwu9K6WpLJTlEMn0CM77P8gyLkt1lYpEd7TpD5mf7t1xOkjj_ANmehliCbvuS_CN',
+            expirationTime: null,
+            keys: {
+                auth: 'lkgP9MU7Gd_TP36O_4UJdg',
+                p256dh: 'BP4y-b-YUS3C8B4e3Sz3UPvxMIOyOFkO3IxSeMR4pmoDkWokmqj_qQkrBuDOJhrfOYr4Vdbwv5XSP1uCGj8ydds',
+            },
+            headers: {
+                "content-type": "application/json"
+            }
+        };
+        const payload = JSON.stringify({
+            title: "New Product From Aka",
+        })
+        webPush.sendNotification(subscription, payload).catch(err => {
+            console.log(err)
+        })
+        return 'ok'
     }
 
 }

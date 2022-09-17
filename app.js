@@ -4,7 +4,7 @@ const fs = require("fs");
 
 /* -------------------------------- Packages -------------------------------- */
 const express = require("express");
-
+const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");
 // const session = require("express-session");
 // const redisStore = require("connect-redis")(session);
@@ -12,6 +12,7 @@ const morgan = require("morgan");
 const compression = require("compression");
 const cors = require("cors");
 const rfs = require("rotating-file-stream");
+const webPush = require("web-push")
 
 
 
@@ -21,9 +22,11 @@ const app = express();
 /* ----------------------------- SET FIRST USER ----------------------------- */
 const mongoose = require('mongoose')
 
-app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(bodyParser.json())
+app.use(express.json())
 // app.use(
 //     session({
 //         ...appConfigs.SESSION,
@@ -33,6 +36,21 @@ app.use(cookieParser());
 // app.use(express.static(path.join(__dirname))); // in order to serve static files on server
 app.use(compression());
 app.use(cors());
+
+/* -------------------------------- Web Push -------------------------------- */
+app.use(express.static(path.join(__dirname, './client')))
+let subscriptions;
+app.post('/api/subscribe', async (req, res) => {
+    const subscription = req.body
+    subscriptions = subscription
+    res.status(200).json(subscription)
+
+})
+app.get('/api/endpoint', (req, res) => {
+    res.json({ data: subscriptions })
+})
+
+// console.log(webPush.generateVAPIDKeys())
 
 /* ----------------------------- Log Store Setup ---------------------------- */
 if (appConfigs.SHOW_LOG === "store" || appConfigs.SHOW_LOG === "full") {

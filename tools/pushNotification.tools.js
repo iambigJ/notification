@@ -2,39 +2,36 @@ const express = require('express')
 const path = require("path")
 const app = express()
 const webPush = require("web-push")
-const fetch = require("node-fetch")
-
+// const fetch = require("node-fetch")
+app.use(express.json())
 app.use(express.static(path.join(__dirname, '../client')))
 
-
-
-const publicVapidKey = 'BDeaF_-6Kf_5nIoDDPVZeERUPQkjUrdq682lc-0lp4ArC9OVWuVa8Dq7l4Gq0DatO7Lvj5T6F6nFhJFc5EHCTEI'
-const privateVapidKeys = 'wVnsINkjLjWSOIWM_NZZYC-YwCpVb2SNNrBHugFTPIs'
-
-
+const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
+const privateVapidKeys = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
 
 webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
 
 
+app.post('/api/subscribe', async (req, res) => {
+    const subscription = req.body
+    console.log(1)
+    console.log(subscription)
+    const sub = {
+        endpoint: subscription.endpoint,
+        expirationTime: null,
+        keys: {
+            auth: subscription.auth,
+            p256dh: subscription.p256dh,
+        }
+    };
+    res.status(200).json({})
+    const payload = JSON.stringify({
+        title: "New Product Available"
+    })
+    webPush.sendNotification(sub, payload).catch(err => {
 
-app.post('/subscribe', async (req, res) => {
-    var notification = {
-        'title': "Title of notification",
-        "text": "Subtitle"
-    }
-
-    var fcm_token = []
-
-    var notification_body = {
-        "notification": notification,
-        "registration_ids": fcm_token
-    }
-
-    await fetch("/subscribe", {
-        'method': 'POST',
-        'headers': {},
-        'body':
     })
 })
+
 
 app.listen(3000, () => { console.log('connect to 3000') })
