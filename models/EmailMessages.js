@@ -3,18 +3,16 @@ const mongoose = require("mongoose")
 const schema = mongoose.Schema
 
 const emailMessageSchema = schema({
-    users: {
-        id: {
+    user: {
+        userId: {
             type: String
         },
         email: {
             type: String
         }
     },
-    type: {
-        type: String,
-        enum: ['email'],
-        default: 'email'
+    title: {
+        type: String
     },
     message: {
         type: String

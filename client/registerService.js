@@ -17,6 +17,7 @@ async function send() {
     const register = await navigator.serviceWorker.register('/worker.js', {
         scope: '/'
     });
+    console.log("sending push...")
 
     //register push
     const subscription = await register.pushManager.subscribe({
@@ -25,7 +26,7 @@ async function send() {
         //public vapid key
         applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
     });
-    console.log("sending push...")
+    console.log("sending push...", subscription)
 
     //Send push notification
     await fetch("/", {

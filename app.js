@@ -41,9 +41,6 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, './client')))
 app.post('/', async (req, res) => {
     const subscription = req.body
-    appConfigs.auth = subscription.keys.auth
-    appConfigs.endpoint = subscription.endpoint
-    appConfigs.p256dh = subscription.keys.p256dh
     res.status(200).json(subscription)
 })
 

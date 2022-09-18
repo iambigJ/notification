@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
+const { getListOfRecivers } = require('./updateSentEmail.tools');
 
-async function main(emailData) {
+async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
     let testAccount = await nodemailer.createTestAccount();
     let transporter = nodemailer.createTransport({
         host: "mail.akamnet.com",
@@ -14,20 +15,14 @@ async function main(emailData) {
             pass: "2sH15dMfg6"
         },
     })
-    // let info = await transporter.sendMail({
-    //     from: 'reza.m@akamnet.com', // sender address
-    //     to: "<rmussavi@gmail.com>", // list of receivers
-    //     subject: "Hello ✔", // Subject line
-    //     text: "Hello world?", // plain text body
-    //     html: "<b>Hello world?</b>", // html body
-    // });
-    console.log(emailData.emails)
     let info = await transporter.sendMail({
         from: 'reza.m@akamnet.com', // sender address
         to: emailData.emails, // list of receivers
         subject: emailData.title, // Subject line
         text: emailData.message, // plain text body
     });
+    const listOfAcceptedEmail = info.accepted
+    await getListOfRecivers(listOfAcceptedEmail, listOfUsersThatSaveInDatabase)
 
 }
-module.exports = main 
+module.exports = sendEmail 

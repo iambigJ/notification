@@ -1,32 +1,21 @@
-const express = require('express')
-const path = require("path")
-const app = express()
 const webPush = require("web-push")
 
 
-const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
-const privateVapidKeys = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
+const publicVapidKey = appConfigs.publicVapidKey
+const privateVapidKeys = appConfigs.privateVapidKeys
 webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
 
 
-exports.pushNotification = async () => {
-    const subscription = {
-        endpoint: appConfigs.endpoint,
-        expirationTime: null,
-        keys: {
-            auth: appConfigs.auth,
-            p256dh: appConfigs.p256dh
-        }
-    };
-
+exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
     const payload = JSON.stringify({
-        title: "New Product From Akam",
+        title: appConfigs.title,
     })
-
-    webPush.sendNotification(subscription, payload).catch(err => {
-        console.log(err)
-    })
-
+    for (let subscription of listOfUsersThatSaveInDatabase) {
+        webPush.sendNotification(subscription.user.push_notification_token, payload)
+            .catch(err => {
+                console.log(err)
+            })
+    }
 }
 
 

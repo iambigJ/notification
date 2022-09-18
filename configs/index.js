@@ -35,8 +35,8 @@ global.appConfigs = {
     DB: db,
     // REDIS: redis,
     /* ---------------------------- Push notification --------------------------- */
-    endpoint: '',
-    auth: '',
-    p256dh: ''
-
+    title: '',
+    message: '',
+    publicVapidKey: process.env.publicVapidKey,
+    privateVapidKeys: process.env.privateVapidKeys
 };

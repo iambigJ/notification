@@ -4,7 +4,7 @@ const BaseController = require('../Base.controller')
 
 exports.doGeMessageslistGET_Controller = async (req, res) => {
     const {
-        id,
+        userId,
         email,
         type,
         push_notification,
@@ -14,7 +14,7 @@ exports.doGeMessageslistGET_Controller = async (req, res) => {
         toDate
     } = req.query
     const queries = {
-        id,
+        userId,
         email,
         type,
         push_notification,
@@ -35,18 +35,16 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         title,
         message,
         push_notification_service,
-        push_notification_token
     } = req.body
     const informationBodyTaken = {
-        users,
+        user: users,
         type,
         title,
         message,
         push_notification_service,
-        push_notification_token
     }
-    for (user of users) {
-        if (!user.id) {
+    for (let user of users) {
+        if (!user.userId) {
             throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
         }
     }
@@ -60,34 +58,20 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         throw ErrorResult.badRequest('فیلد عنوان را پر کنید', 'title_required')
     }
     if (type === "email") {
-        for (user of users) {
+        for (let user of users) {
             if (!user.email) {
                 throw ErrorResult.badRequest('فیلد ایمیل را پر کنید', 'email_required')
             }
         }
-        if (push_notification_service || push_notification_token) {
-            throw ErrorResult.badRequest('لطفا از پر کردن مقادیر مربوط به << push notification >> خودداری کنید', 'bad_request')
-        }
     }
     if (type === "push_notification") {
-        if (!push_notification_service || !push_notification_token) {
-            throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
-        }
-    }
-    if (type === "inside_message") {
-        for (user of users) {
-            if (!user.id) {
-                throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
+        for (let user of users) {
+            if (!user.push_notification_token) {
+                throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
             }
         }
-        if (!title) {
-            throw ErrorResult.badRequest('فیلد عنوان را پر کنید', 'title_required')
-        }
-        if (!message) {
-            throw ErrorResult.badRequest('فیلد پیام را پر کنید', 'message_required')
-        }
-        if (push_notification_service || push_notification_token) {
-            throw ErrorResult.badRequest('لطفا از پر کردن مقادیر مربوط به << push notification >> خودداری کنید', 'bad_request')
+        if (!push_notification_service) {
+            throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
         }
     }
     const result = await messageService.addNewMessage_Services(informationBodyTaken)

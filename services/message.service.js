@@ -2,23 +2,20 @@ const Notification = require('../models/Notification')
 const InsideMessages = require('../models/InsideMessages')
 const EmailMessages = require('../models/EmailMessages')
 const ErrorResult = require('../tools/error.tool')
-const main = require('../tools/sendEmail.tools')
+const sendEmail = require('../tools/sendEmail.tools')
 const { pushNotification } = require('../tools/pushNotification.tools')
-const { query } = require('express')
 
 
 /* ----------------------------- GET MESSAGES LIST ----------------------------- */
 exports.geMessageslist_Services = async (queries) => {
+
     const match = {}
-    if (queries.id) {
-        match['users.id'] = queries.id
+    if (queries.userId) {
+        match['user.id'] = queries.userId
     }
     if (queries.email) {
         match.email = { $regex: queries.email }
     }
-    // if (queries.type) {
-    //     match.type = queries.type
-    // }
     if (queries.seen) {
         match.seen = queries.seen
     }
@@ -51,47 +48,56 @@ exports.geMessageslist_Services = async (queries) => {
 
 /* -------------------------- SEND MESSAGE TO USER -------------------------- */
 exports.addNewMessage_Services = async (informationBodyTaken) => {
+
     var newUserIdList = []
-    var newUserListForSaveInDatabase = []
     // type was email
     if (informationBodyTaken.type === "email") {
         var emails = []
-        for (user of informationBodyTaken.users) {
+        for (user of informationBodyTaken.user) {
             emails.push(user.email)
-            newUserIdList.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
+            newUserIdList.push({ ...informationBodyTaken, user: { userId: user.userId, email: user.email } })
         }
+        const listOfUsersThatSaveInDatabase = await EmailMessages.insertMany(newUserIdList)
         const emailData = {
             emails: emails,
             title: informationBodyTaken.title,
             message: informationBodyTaken.message,
         }
-        return main(emailData)
-            .then(async res => {
-                for (user of informationBodyTaken.users) {
-                    newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email }, sent_date: new Date(), sent: true })
-                }
-                await EmailMessages.insertMany(newUserListForSaveInDatabase)
-                return newUserIdList
-            })
-            .catch(async err => {
-                console.log(err)
-                for (user of informationBodyTaken.users) {
-                    newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
-                }
-                await EmailMessages.insertMany(newUserListForSaveInDatabase)
-                return newUserIdList
-            })
+
+        sendEmail(emailData, listOfUsersThatSaveInDatabase)
+            .catch(err => console.log(err))
+
+        return listOfUsersThatSaveInDatabase
     }
+
+
     // type is push_notification
     if (informationBodyTaken.type === "push_notification") {
 
-        pushNotification()
-        return 'ok'
+        appConfigs.title = informationBodyTaken.title
+        appConfigs.message = informationBodyTaken.message
+
+        const listOfTokens = []
+        const newListForSaveInDatabase = []
+
+        for (token of informationBodyTaken.user) {
+            // listOfTokens.push(token.push_notification_token)
+            newListForSaveInDatabase.push({ ...informationBodyTaken, user: { userId: token.userId, push_notification_token: token.push_notification_token } })
+        }
+
+        const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase)
+
+        pushNotification(listOfUsersThatSaveInDatabase)
+
+        return listOfUsersThatSaveInDatabase
     }
+
     // type is inside_message
     if (informationBodyTaken.type === "inside_message") {
-        for (user of informationBodyTaken.users) {
-            newUserListForSaveInDatabase.push({ ...informationBodyTaken, users: { id: user.id, email: user.email } })
+        const newUserListForSaveInDatabase = []
+        console.log(informationBodyTaken)
+        for (user of informationBodyTaken.user) {
+            newUserListForSaveInDatabase.push({ ...informationBodyTaken, user: { userId: user.userId, email: user.email } })
         }
         const response = await InsideMessages.insertMany(newUserListForSaveInDatabase)
         return response
