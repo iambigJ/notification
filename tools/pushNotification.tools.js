@@ -1,6 +1,6 @@
 const webPush = require("web-push")
 
-
+const mailTo = appConfigs.mailTo
 const publicVapidKey = appConfigs.publicVapidKey
 const privateVapidKeys = appConfigs.privateVapidKeys
 webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)

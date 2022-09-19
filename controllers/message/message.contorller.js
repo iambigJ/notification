@@ -11,7 +11,10 @@ exports.doGeMessageslistGET_Controller = async (req, res) => {
         seen,
         sent,
         fromDate,
-        toDate
+        toDate,
+        limit,
+        skip,
+        sort
     } = req.query
     const queries = {
         userId,
@@ -21,7 +24,10 @@ exports.doGeMessageslistGET_Controller = async (req, res) => {
         seen,
         sent,
         fromDate,
-        toDate
+        toDate,
+        limit,
+        skip,
+        sort
     }
 
     const result = await messageService.geMessageslist_Services(queries)

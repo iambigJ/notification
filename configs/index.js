@@ -38,5 +38,6 @@ global.appConfigs = {
     title: '',
     message: '',
     publicVapidKey: process.env.publicVapidKey,
-    privateVapidKeys: process.env.privateVapidKeys
+    privateVapidKeys: process.env.privateVapidKeys,
+    mailto: process.env.privateVapidKeys
 };

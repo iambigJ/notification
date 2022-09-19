@@ -11,7 +11,7 @@ exports.geMessageslist_Services = async (queries) => {
 
     const match = {}
     if (queries.userId) {
-        match['user.id'] = queries.userId
+        match['user.userId'] = queries.userId
     }
     if (queries.email) {
         match.email = { $regex: queries.email }
@@ -32,17 +32,30 @@ exports.geMessageslist_Services = async (queries) => {
         match.createdAt = { $gte: new Date(queries.fromDate), $lte: new Date(queries.toDate) }
     }
     if (queries.type === "inside_message") {
-        const getMessages = await InsideMessages.find(match)
-        return getMessages
+        const getMessages = await InsideMessages
+            .find(match)
+            .limit(queries.limit)
+            .skip(queries.skip)
+            .sort({ createdAt: queries.sort })
+        return { getMessages, Total: getMessages.length }
     }
     if (queries.type === "email") {
-        const getMessages = await EmailMessages.find(match)
-        return getMessages
+        const getMessages = await EmailMessages
+            .find(match)
+            .limit(queries.limit)
+            .skip(queries.skip)
+            .sort({ createdAt: queries.sort })
+        return { getMessages, Total: getMessages.length }
     }
     if (queries.type === "push_notification") {
-        const getMessages = await Notification.find(match)
-        return getMessages
+        const getMessages = await Notification
+            .find(match)
+            .limit(queries.limit)
+            .skip(queries.skip - 1)
+            .sort({ createdAt: queries.sort })
+        return { getMessages, Total: getMessages.length }
     }
+
     return "لطفا یکی از تایپ های مورد نظر را انتخاب کنید"
 }
 
