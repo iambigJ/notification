@@ -2,15 +2,15 @@ const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-F
 
 
 
-const check = () => {
-    if (!('serviceWorker' in navigator)) {
-        throw new Error('No Service Worker support!')
-    }
-    if (!('PushManager' in window)) {
-        throw new Error('No Push API Support!')
-    }
-}
-check()
+// const check = () => {
+//     if (!('serviceWorker' in navigator)) {
+//         throw new Error('No Service Worker support!')
+//     }
+//     if (!('PushManager' in window)) {
+//         throw new Error('No Push API Support!')
+//     }
+// }
+// check()
 
 async function send() {
     //register service worker

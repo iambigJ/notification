@@ -24,7 +24,11 @@ const emailMessageSchema = schema({
     sent: {
         type: Boolean,
         default: false
-    }
+    },
+    delivery: {
+        type: Boolean,
+        default: false
+    },
 }, {
     timestamps: true,
     collection: 'emailMessages'

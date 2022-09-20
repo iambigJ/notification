@@ -10,7 +10,7 @@ exports.getListOfRecivers = async (listOfAcceptedEmail, listOfUsersThatSaveInDat
         }
         await EmailMessages.updateMany(
             { _id: { $in: newListOfAcceptedEmail } },
-            { $set: { sent: true, sent_date: new Date() } },
+            { $set: { sent: true, delivery: true, sent_date: new Date() } },
             { multi: true }
         )
     }

@@ -9,7 +9,8 @@ const { asyncHandler } = require('../../../../tools/asyncHandler.tools')
 router.get('/', asyncHandler(messagesController.doGeMessageslistGET_Controller))
 /* -------------------------- ADD NEW NOTIFICATION -------------------------- */
 router.post('/', asyncHandler(messagesController.doAddNewMessagePOST_Controller))
-/* ----------------- CHECK USER ACCESS TO COURSE FIND BY ID ----------------- */
-// router.get('/check/:courseId', asyncHandler(course.doCheckAccessUserToCourseByIdGET_Controller))
+
+/* ------------------------ CREATE TOKEN FROM CLIENT ------------------------ */
+router.post('/client', asyncHandler(messagesController.doCreateTokenFromClientPOST_Controller))
 
 module.exports = router

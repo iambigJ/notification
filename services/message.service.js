@@ -1,7 +1,7 @@
 const Notification = require('../models/Notification')
 const InsideMessages = require('../models/InsideMessages')
 const EmailMessages = require('../models/EmailMessages')
-const ErrorResult = require('../tools/error.tool')
+const GetToken = require("../models/GetToken")
 const sendEmail = require('../tools/sendEmail.tools')
 const { pushNotification } = require('../tools/pushNotification.tools')
 
@@ -116,4 +116,11 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
         return response
     }
 
+}
+/* ------------------------ Create token from client ------------------------ */
+exports.createTokenFromClient_Services = async (token) => {
+
+    const response = new GetToken(token)
+    await response.save()
+    return response
 }

@@ -3,6 +3,7 @@ const ErrorResult = require('../../tools/error.tool')
 const BaseController = require('../Base.controller')
 
 exports.doGeMessageslistGET_Controller = async (req, res) => {
+
     const {
         userId,
         email,
@@ -81,6 +82,13 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         }
     }
     const result = await messageService.addNewMessage_Services(informationBodyTaken)
+    BaseController.ok(res, result)
+}
+
+
+exports.doCreateTokenFromClientPOST_Controller = async (req, res) => {
+    const token = req.body
+    const result = await messageService.createTokenFromClient_Services(token)
     BaseController.ok(res, result)
 }
 

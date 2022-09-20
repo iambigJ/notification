@@ -41,8 +41,10 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, './client')))
 app.post('/', async (req, res) => {
     const subscription = req.body
+    console.log(subscription)
     res.status(200).json(subscription)
 })
+console.log(456564)
 
 // console.log(webPush.generateVAPIDKeys())
 
