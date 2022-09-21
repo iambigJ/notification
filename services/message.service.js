@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require("uuid")
 const Notification = require('../models/Notification')
 const InsideMessages = require('../models/InsideMessages')
 const EmailMessages = require('../models/EmailMessages')
@@ -22,6 +23,9 @@ exports.geMessageslist_Services = async (queries) => {
     if (queries.sent) {
         match.sent = queries.sent
     }
+    if (queries.groupId) {
+        match.groupId = queries.groupId
+    }
     if (queries.fromDate) {
         match.createdAt = { $gte: new Date(queries.fromDate) }
     }
@@ -34,26 +38,26 @@ exports.geMessageslist_Services = async (queries) => {
     if (queries.type === "inside_message") {
         const getMessages = await InsideMessages
             .find(match)
-            .limit(queries.limit)
-            .skip(queries.skip)
+            .limit(queries.take)
+            .skip(queries.page * queries.take)
             .sort({ createdAt: queries.sort })
-        return { getMessages, Total: getMessages.length }
+        return { getMessages, total: getMessages.length }
     }
     if (queries.type === "email") {
         const getMessages = await EmailMessages
             .find(match)
-            .limit(queries.limit)
-            .skip(queries.skip)
+            .limit(queries.take)
+            .skip(queries.page * queries.take)
             .sort({ createdAt: queries.sort })
-        return { getMessages, Total: getMessages.length }
+        return { getMessages, total: getMessages.length }
     }
     if (queries.type === "push_notification") {
         const getMessages = await Notification
             .find(match)
-            .limit(queries.limit)
-            .skip(queries.skip - 1)
+            .limit(queries.take)
+            .skip(queries.page * queries.take)
             .sort({ createdAt: queries.sort })
-        return { getMessages, Total: getMessages.length }
+        return { getMessages, total: getMessages.length }
     }
 
     return "لطفا یکی از تایپ های مورد نظر را انتخاب کنید"
@@ -61,6 +65,7 @@ exports.geMessageslist_Services = async (queries) => {
 
 /* -------------------------- SEND MESSAGE TO USER -------------------------- */
 exports.addNewMessage_Services = async (informationBodyTaken) => {
+    const uniqueCode = uuidv4()
 
     var newUserIdList = []
     // type was email
@@ -68,7 +73,7 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
         var emails = []
         for (user of informationBodyTaken.user) {
             emails.push(user.email)
-            newUserIdList.push({ ...informationBodyTaken, user: { userId: user.userId, email: user.email } })
+            newUserIdList.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
         }
         const listOfUsersThatSaveInDatabase = await EmailMessages.insertMany(newUserIdList)
         const emailData = {
@@ -90,14 +95,12 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
         appConfigs.title = informationBodyTaken.title
         appConfigs.message = informationBodyTaken.message
 
-        const listOfTokens = []
         const newListForSaveInDatabase = []
 
         for (token of informationBodyTaken.user) {
             // listOfTokens.push(token.push_notification_token)
-            newListForSaveInDatabase.push({ ...informationBodyTaken, user: { userId: token.userId, push_notification_token: token.push_notification_token } })
+            newListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: token.userId, push_notification_token: token.push_notification_token } })
         }
-
         const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase)
 
         pushNotification(listOfUsersThatSaveInDatabase)
@@ -110,7 +113,7 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
         const newUserListForSaveInDatabase = []
         console.log(informationBodyTaken)
         for (user of informationBodyTaken.user) {
-            newUserListForSaveInDatabase.push({ ...informationBodyTaken, user: { userId: user.userId, email: user.email } })
+            newUserListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
         }
         const response = await InsideMessages.insertMany(newUserListForSaveInDatabase)
         return response

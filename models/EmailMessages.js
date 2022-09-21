@@ -17,6 +17,9 @@ const emailMessageSchema = schema({
     message: {
         type: String
     },
+    groupId: {
+        type: String,
+    },
     sent_date: {
         type: Date,
         default: null

@@ -17,6 +17,9 @@ const insideMessageSchema = schema({
     message: {
         type: String
     },
+    groupId: {
+        type: String,
+    },
     seen_date: {
         type: Date,
         default: null

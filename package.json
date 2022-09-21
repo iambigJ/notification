@@ -4,7 +4,8 @@
   "author": "AKAM",
   "private": true,
   "scripts": {
-    "start": "nodemon -L bin/www"
+    "start": "nodemon -L bin/www",
+    "test": "jest -w"
   },
   "dependencies": {
     "app-module-path": "^2.2.0",
@@ -36,6 +37,7 @@
     "request-ip": "^2.1.3",
     "rotating-file-stream": "^3.0.4",
     "simple-thumbnail": "^1.6.5",
+    "uuid": "^9.0.0",
     "validator": "^13.7.0",
     "web-push": "^3.5.0"
   },
@@ -52,6 +54,7 @@
   },
   "homepage": "http://akam-node-template git address#readme",
   "devDependencies": {
+    "jest": "^29.0.3",
     "nodemon": "^2.0.7",
     "replace": "^1.2.1",
     "sequelize-cli": "^6.4.1"

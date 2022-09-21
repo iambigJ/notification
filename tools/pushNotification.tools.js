@@ -1,4 +1,5 @@
 const webPush = require("web-push")
+const { getListOfpushNotificationRecivers } = require("./updatePushnotificationSent.tools")
 
 const mailTo = appConfigs.mailTo
 const publicVapidKey = appConfigs.publicVapidKey
@@ -7,15 +8,26 @@ webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapi
 
 
 exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
+    var listOfAcceptes = []
     const payload = JSON.stringify({
         title: appConfigs.title,
     })
     for (let subscription of listOfUsersThatSaveInDatabase) {
-        webPush.sendNotification(subscription.user.push_notification_token, payload)
-            .catch(err => {
-                console.log(err)
-            })
+        const sendNotification = await webPush.sendNotification(subscription.user.push_notification_token, payload)
+        listOfAcceptes.push({ ...sendNotification, id: subscription._id })
     }
+
+    Promise.allSettled(listOfAcceptes)
+        .then(async res => {
+            const listOfIdsThatSentNotification = []
+            for (notification of res) {
+                listOfIdsThatSentNotification.push(notification.value.id)
+            }
+            console.log(listOfIdsThatSentNotification)
+            await getListOfpushNotificationRecivers(listOfIdsThatSentNotification)
+        })
+        .catch(err => console.log(err))
+
 }
 
 
