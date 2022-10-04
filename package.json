@@ -1,7 +1,7 @@
 {
   "name": "akam-node-template",
   "version": "0.0.0",
-  "author": "AKAM",
+  "author": "Reza Mousavi",
   "private": true,
   "scripts": {
     "start": "nodemon -L bin/www",
