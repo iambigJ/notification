@@ -13,8 +13,12 @@ exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
         title: appConfigs.title,
     })
     for (let subscription of listOfUsersThatSaveInDatabase) {
-        const sendNotification = await webPush.sendNotification(subscription.user.push_notification_token, payload)
-        listOfAcceptes.push({ ...sendNotification, id: subscription._id })
+        try {
+            const sendNotification = await webPush.sendNotification(subscription.user.push_notification_token, payload)
+            listOfAcceptes.push({ ...sendNotification, id: subscription._id })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     Promise.allSettled(listOfAcceptes)

@@ -44,7 +44,7 @@ app.post('/', async (req, res) => {
     console.log(subscription)
     res.status(200).json(subscription)
 })
-console.log(456564)
+
 
 // console.log(webPush.generateVAPIDKeys())
 
