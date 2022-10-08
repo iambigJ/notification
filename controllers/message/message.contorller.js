@@ -2,7 +2,7 @@ const messageService = require('../../services/message.service')
 const ErrorResult = require('../../tools/error.tool')
 const BaseController = require('../Base.controller')
 
-exports.doGeMessageslistGET_Controller = async (req, res) => {
+exports.doGeMessagesListGET_Controller = async (req, res) => {
 
     const {
         userId,

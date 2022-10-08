@@ -3,20 +3,20 @@ const { getListOfRecivers } = require('./updateSentEmail.tools');
 
 async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
     let transporter = nodemailer.createTransport({
-        host: appConfigs.mail.host,
-        port: appConfigs.mail.port,
-        secure: appConfigs.mail.secure,
+        host: appConfigs.Mail.host,
+        port: appConfigs.Mail.port,
+        secure: appConfigs.Mail.secure,
         tls: {
             rejectUnauthorized: false
         },
         auth: {
-            user: appConfigs.mail.user,
-            pass: appConfigs.mail.password
+            user: appConfigs.Mail.user,
+            pass: appConfigs.Mail.password
         },
     });
 
     let info = await transporter.sendMail({
-        from: appConfigs.mail.user, // sender address
+        from: appConfigs.Mail.user, // sender address
         
         to: emailData.emails, // list of receivers
         subject: emailData.title, // Subject line

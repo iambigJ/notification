@@ -6,7 +6,7 @@ const { asyncHandler } = require('../../../../tools/asyncHandler.tools')
 /* --------------------- perifix: /api/v1/notification/ --------------------- */
 
 /* ---------------------------- GET NOTIFICATION ---------------------------- */
-router.get('/', asyncHandler(messagesController.doGeMessageslistGET_Controller))
+router.get('/', asyncHandler(messagesController.doGeMessagesListGET_Controller))
 /* -------------------------- ADD NEW NOTIFICATION -------------------------- */
 router.post('/', asyncHandler(messagesController.doAddNewMessagePOST_Controller))
 

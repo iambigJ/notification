@@ -12,6 +12,9 @@ const cors = require("cors");
 const rfs = require("rotating-file-stream");
 const webPush = require("web-push/src")
 
+const routes = require("./routes");
+const errorHandler = require("./middlewares/errorHandler");
+
 /* ---------------------------- Express App Setup --------------------------- */
 const app = express();
 
@@ -62,11 +65,8 @@ if (appConfigs.SHOW_LOG === "show" || appConfigs.SHOW_LOG === "full") {
     app.use(morgan("dev"));
 }
 
-/* ---------------------------- Middleware Setup ---------------------------- */
-const errorHandler = require("./middlewares/errorHandler");
 
 /* --------------------------------- Routes --------------------------------- */
-const routes = require("./routes");
 app.use("/", routes);
 
 /* ---------------------- Express Default Error Handler --------------------- */
