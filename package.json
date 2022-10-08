@@ -1,7 +1,7 @@
 {
-  "name": "akam-node-template",
+  "name": "notification-service",
   "version": "0.0.0",
-  "author": "Reza Mousavi",
+  "author": "AKAM",
   "private": true,
   "scripts": {
     "start": "nodemon -L bin/www",
@@ -43,21 +43,20 @@
   },
   "keywords": [
     "akam",
-    "akam-node-template"
+    "notification-service"
   ],
   "license": "ISC",
   "description": "## Requirements:   - you need to have `docker` & `docker-compose` installed on your server or system.",
   "main": "./bin/www",
   "repository": {
     "type": "git",
-    "url": "akam-node-template git address"
+    "url": "notification-service git address"
   },
-  "homepage": "http://akam-node-template git address#readme",
+  "homepage": "http://notification-service git address#readme",
   "devDependencies": {
     "jest": "^29.0.3",
     "nodemon": "^2.0.7",
     "replace": "^1.2.1",
-    "sequelize-cli": "^6.4.1",
-    "supertest": "^6.2.4"
+    "sequelize-cli": "^6.4.1"
   }
 }

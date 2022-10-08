@@ -1,64 +1,65 @@
-version: '3.5'
-services:
+# version: '3.5'
+# services:
 
-  # ---------------------------------- redis ------------------------------------ 
-  #   redis:
-  #     container_name: redis
-  #     image: redis:6.2-alpine
-  #     restart: always
-  #     env_file:
-  #     - ./.env
-  #     networks:
-  #       - akam-node-template-network
-  #     expose:
-  #       - '6379'
-  #     command: redis-server --save 20 1 --loglevel warning
-  #     # ports:
-  #     #   - '6379:6379'
+# ---------------------------------- redis ------------------------------------ 
+# redis:
+#   container_name: redis
+#   image: redis:6.2-alpine
+#   restart: always
+#   env_file:
+#   - ./.env
+#   networks:
+#     - notification-service-network
+#   expose:
+#     - '6379'
+#   command: redis-server --save 20 1 --loglevel warning
+#   ports:
+#     - '6379:6379'
 
-  # ----------------------------------- Mongo -----------------------------------
-  notification-db:
-    image: mongo:5.0
-    container_name: notification-db
-    restart: unless-stopped
-    volumes:
-      - ./___database:/data/db
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 27018:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
-    networks:
-      - global-network
+# ----------------------------------- Mongo -----------------------------------
+# notification-db:
+#   image: mongo:5.0
+#   container_name: notification-db
+#   restart: unless-stopped
+#   volumes:
+#     - ./___database:/data/db
+#     - /etc/localtime:/etc/localtime:ro
+#   ports:
+#     - 27018:27017
+#   environment:
+#     MONGO_INITDB_ROOT_USERNAME: admin
+#     MONGO_INITDB_ROOT_PASSWORD: admin
+#   networks:
+#     - global-network
 
-  # --------------------------------- Backend -------------------------------- 
-  notification-app:
-    container_name: notification-app
-    image: notification-app:v1
-    build:
-      context: ./
-      target: debug
-    restart: unless-stopped
-    env_file:
-      - ./.env
-    networks:
-      - global-network
-    volumes:
-      - ./:/notification
-      - /notification/node_modules # we need to include our project in volumes in order to debug it
-    ports:
-      - 3050:3050
-      # - 9229:9229 # this port is for vscode debugger tool
+# --------------------------------- Backend -------------------------------- 
+# notification-app:
+#   container_name: notification-app
+#   image: notification-app:v1
+#   build:
+#     context: ./
+#     target: debug
+#   restart: unless-stopped
+#   env_file:
+#     - ./.env
+#   networks:
+#     - global-network
+#   volumes:
+#     - ./:/notification
+#     - /notification/node_modules # we need to include our project in volumes in order to debug it
+#   ports:
+#     - 3050:3050
+# - 9229:9229 # this port is for vscode debugger tool
 
-      # add external network name if you want your all containers can access to one network
-      # networks:
-      #   external network name:   
-      #     external: true
+# add external network name if you want your all containers can access to one network
+# networks:
+#   external network name:   
+#     external: true
 
-networks:
-  global-network:
+# networks:
+#   global-network:
+
+# volumes:
+#   mongo_data:
 
 
-volumes:
-  mongo_data:

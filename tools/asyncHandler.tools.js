@@ -1,7 +1,7 @@
 const ErrorResult = require("./error.tool");
 const TypeTool = require("./type.tool");
 const BaseController = require("../controllers/Base.controller");
-const { findMessage } = require("./../messages/message");
+const { findMessage } = require("../messages/message");
 
 /* ------------------ global try catch for our controllers ------------------ */
 exports.asyncHandler = (fn) => async (req, res, next) => {

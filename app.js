@@ -6,21 +6,16 @@ const fs = require("fs");
 const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");
-// const session = require("express-session");
-// const redisStore = require("connect-redis")(session);
 const morgan = require("morgan");
 const compression = require("compression");
 const cors = require("cors");
 const rfs = require("rotating-file-stream");
-const webPush = require("web-push")
-
-
+const webPush = require("web-push/src")
 
 /* ---------------------------- Express App Setup --------------------------- */
 const app = express();
 
 /* ----------------------------- SET FIRST USER ----------------------------- */
-const mongoose = require('mongoose')
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -40,13 +35,11 @@ app.use(cors());
 /* -------------------------------- Web Push -------------------------------- */
 app.use(express.static(path.join(__dirname, './client')))
 app.post('/', async (req, res) => {
-    const subscription = req.body
-    console.log(subscription)
+    const subscription = req.body;
     res.status(200).json(subscription)
 })
 
-
-// console.log(webPush.generateVAPIDKeys())
+// webPush.generateVAPIDKeys();
 
 /* ----------------------------- Log Store Setup ---------------------------- */
 if (appConfigs.SHOW_LOG === "store" || appConfigs.SHOW_LOG === "full") {

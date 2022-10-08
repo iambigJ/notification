@@ -1,17 +1,12 @@
-const webPush = require("web-push")
-const { getListOfpushNotificationRecivers } = require("./updatePushnotificationSent.tools")
+const webPush = require("web-push/src");
+const { getListOfpushNotificationRecivers } = require("./updatePushnotificationSent.tools");
 
-const mailTo = appConfigs.mailTo
-const publicVapidKey = appConfigs.publicVapidKey
-const privateVapidKeys = appConfigs.privateVapidKeys
-webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
-
+webPush.setVapidDetails(appConfigs.MAIL_TO, appConfigs.PUBLIC_VAPID_KEY, appConfigs.PRIVATE_VAPID_KEY);
 
 exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
     var listOfAcceptes = []
-    const payload = JSON.stringify({
-        title: appConfigs.title,
-    })
+    const payload = JSON.stringify({ title: appConfigs.title });
+
     for (let subscription of listOfUsersThatSaveInDatabase) {
         try {
             const sendNotification = await webPush.sendNotification(subscription.user.push_notification_token, payload)
@@ -29,9 +24,7 @@ exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
             }
             console.log(listOfIdsThatSentNotification)
             await getListOfpushNotificationRecivers(listOfIdsThatSentNotification)
-        })
-        .catch(err => console.log(err))
-
+        }).catch(err => console.log(err))
 }
 
 
@@ -83,10 +76,10 @@ exports.pushNotification = async (listOfUsersThatSaveInDatabase) => {
 // app.use(express.json())
 // app.use(express.static(path.join(__dirname, '../client')))
 
-// const publicVapidKey = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
-// const privateVapidKeys = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
+// const PUBLIC_VAPID_KEY = 'BD1Zf7bN4Hyso4YXAmKJiUuIE7teESslRoEGbZhKyvEfxuPs92YDvG-Fwaig6_WZ2IjVUDv07m_VRBpm6dFrwZI'
+// const PRIVATE_VAPID_KEY = 'TA3typPc09Q4fcEHMKcWew9PgRmrPmyyNpoOCSfCy0g'
 
-// webPush.setVapidDetails("mailto:rmussavi@gmail.com", publicVapidKey, privateVapidKeys)
+// webPush.setVapidDetails("mailto:rmussavi@gmail.com", PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY)
 
 
 // app.post('/api/subscribe', async (req, res) => {

@@ -15,7 +15,7 @@ const ErrorResult = require("./error.tool");
 const TypeTool = require("./type.tool");
 const { logError } = require("./log.tool");
 const BaseController = require("../controllers/Base.controller");
-const { findMessage } = require("./../messages/message");
+const { findMessage } = require("../messages/message");
 
 
 
