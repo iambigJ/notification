@@ -20,7 +20,7 @@ async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
         
         to: emailData.emails, // list of receivers
         subject: emailData.title, // Subject line
-        text: emailData.message, // plain text body
+        html: emailData.message, // plain text body
     });
 
     const listOfAcceptedEmail = info.accepted;
