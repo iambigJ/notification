@@ -2,10 +2,13 @@
 const express = require("express");
 const router = express.Router()
 const api = require('./api')
+
 /* ---------------------------------- Tools --------------------------------- */
 const BaseController = require("../controllers/Base.controller");
 const ErrorResult = require("../tools/error.tool");
+
 /* --------------------------------- Routes --------------------------------- */
+
 // api routes
 router.use('/api', api)
 /* ----------------------------------- 404 ---------------------------------- */

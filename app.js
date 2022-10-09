@@ -10,7 +10,7 @@ const morgan = require("morgan");
 const compression = require("compression");
 const cors = require("cors");
 const rfs = require("rotating-file-stream");
-const webPush = require("web-push/src")
+// const webPush = require("web-push/src")
 
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
