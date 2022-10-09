@@ -3,7 +3,7 @@ const router = express.Router()
 
 const notification = require('./notification')
 
-// /* ----------------------------- prifix: /api/v1 ---------------------------- */
+/* ----------------------------- prifix: /api/v1 ---------------------------- */
 router.use('/notification', notification)
 
 module.exports = router

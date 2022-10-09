@@ -1,9 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const notification = require('./notification.routes')
+const messagesController = require('../../../../controllers/message/message.contorller')
+const { asyncHandler } = require('../../../../tools/asyncHandler.tools')
 
+/* --------------------- prefix: /api/v1/notification/ --------------------- */
 
+router.get('/', asyncHandler(messagesController.doGeMessagesListGET_Controller))
+router.post('/', asyncHandler(messagesController.doAddNewMessagePOST_Controller))
 
-/* -------------------------- prefix: /api/v1/notification/ ------------------------- */
-router.use('/', notification)
+router.post('/client', asyncHandler(messagesController.doCreateTokenFromClientPOST_Controller))
+
 module.exports = router

@@ -82,23 +82,19 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
             message: informationBodyTaken.message,
         }
 
+        console.log(emailData, listOfUsersThatSaveInDatabase);
+
         sendEmail(emailData, listOfUsersThatSaveInDatabase)
             .catch(err => console.log(err))
 
         return listOfUsersThatSaveInDatabase
     }
-
-
-    // type is push_notification
-    if (informationBodyTaken.type === "push_notification") {
-
-        appConfigs.title = informationBodyTaken.title
-        appConfigs.message = informationBodyTaken.message
+    else if (informationBodyTaken.type === "push_notification") {
+        appConfigs.title = informationBodyTaken.title;
+        appConfigs.message = informationBodyTaken.message;
 
         const newListForSaveInDatabase = []
-
         for (token of informationBodyTaken.user) {
-            // listOfTokens.push(token.push_notification_token)
             newListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: token.userId, push_notification_token: token.push_notification_token } })
         }
         const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase)
@@ -107,11 +103,8 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
 
         return listOfUsersThatSaveInDatabase
     }
-
-    // type is inside_message
-    if (informationBodyTaken.type === "inside_message") {
+    else if (informationBodyTaken.type === "inside_message") {
         const newUserListForSaveInDatabase = []
-        console.log(informationBodyTaken)
         for (user of informationBodyTaken.user) {
             newUserListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
         }

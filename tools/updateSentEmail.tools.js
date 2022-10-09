@@ -8,6 +8,7 @@ exports.getListOfRecivers = async (listOfAcceptedEmail, listOfUsersThatSaveInDat
         if (listOfAcceptedEmail.includes(user.user.email)) {
             newListOfAcceptedEmail.push(user._id)
         }
+        
         await EmailMessages.updateMany(
             { _id: { $in: newListOfAcceptedEmail } },
             { $set: { sent: true, delivery: true, sent_date: new Date() } },

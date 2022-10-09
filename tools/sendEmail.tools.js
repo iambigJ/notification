@@ -5,7 +5,7 @@ async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
     let transporter = nodemailer.createTransport({
         host: appConfigs.Mail.host,
         port: appConfigs.Mail.port,
-        secure: appConfigs.Mail.secure,
+        secure: appConfigs.Mail.secure === "true",
         tls: {
             rejectUnauthorized: false
         },
@@ -22,8 +22,8 @@ async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
         subject: emailData.title, // Subject line
         text: emailData.message, // plain text body
     });
-    const listOfAcceptedEmail = info.accepted
-    await getListOfRecivers(listOfAcceptedEmail, listOfUsersThatSaveInDatabase)
 
+    const listOfAcceptedEmail = info.accepted;
+    await getListOfRecivers(listOfAcceptedEmail, listOfUsersThatSaveInDatabase);
 }
 module.exports = sendEmail 

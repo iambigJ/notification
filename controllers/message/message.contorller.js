@@ -42,47 +42,50 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         title,
         message,
         push_notification_service,
-    } = req.body
+    } = req.body;
+
     const informationBodyTaken = {
         user: users,
         type,
         title,
         message,
         push_notification_service,
-    }
+    };
+
     for (let user of users) {
         if (!user.userId) {
-            throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required')
+            throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required');
         }
     }
     if (!type) {
-        throw ErrorResult.badRequest('فیلد تایپ را پر کنید', 'type_required')
+        throw ErrorResult.badRequest('فیلد تایپ را پر کنید', 'type_required');
     }
     if (!message) {
-        throw ErrorResult.badRequest('فیلد پیام را پر کنید', 'message_required')
+        throw ErrorResult.badRequest('فیلد پیام را پر کنید', 'message_required');
     }
     if (!title) {
-        throw ErrorResult.badRequest('فیلد عنوان را پر کنید', 'title_required')
+        throw ErrorResult.badRequest('فیلد عنوان را پر کنید', 'title_required');
     }
     if (type === "email") {
         for (let user of users) {
             if (!user.email) {
-                throw ErrorResult.badRequest('فیلد ایمیل را پر کنید', 'email_required')
+                throw ErrorResult.badRequest('فیلد ایمیل را پر کنید', 'email_required');
             }
         }
     }
     if (type === "push_notification") {
+        if (!push_notification_service) {
+            throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
+        }
         for (let user of users) {
             if (!user.push_notification_token) {
                 throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
             }
         }
-        if (!push_notification_service) {
-            throw ErrorResult.badRequest('فیلد نام سرویس یا توکن یا پیام کوتاه سرویس را پر کنید', 'push_notification_service_or_notification_token_required')
-        }
     }
-    const result = await messageService.addNewMessage_Services(informationBodyTaken)
-    BaseController.ok(res, result)
+    const result = await messageService.addNewMessage_Services(informationBodyTaken);
+
+    return BaseController.ok(res, result);
 }
 
 
