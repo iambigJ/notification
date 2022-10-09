@@ -2,21 +2,14 @@
 const fs = require("fs");
 
 /* -------------------------------- Packages -------------------------------- */
-const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const DeviceDetector = require("node-device-detector");
 const deviceDetector = new DeviceDetector();
-
-/* ----------------------------------- DB ----------------------------------- */
-// const Redis = require("../tools/redis.tool");
 
 /* ---------------------------------- Tools --------------------------------- */
 const ErrorResult = require("./error.tool");
 const TypeTool = require("./type.tool");
 const { logError } = require("./log.tool");
-const BaseController = require("../controllers/Base.controller");
-const { findMessage } = require("../messages/message");
-
 
 
 exports.respond = (result = "", status = 200) => {
@@ -35,29 +28,6 @@ exports.errorResponse = (message = "", name = "BAD_REQUEST", status = 400) => {
         name,
         message,
     };
-};
-
-exports.sendMail_tool = async (to, subject, text, html) => {
-    try {
-        const transporter = nodemailer.createTransport({
-            secure: false,
-            service: appConfigs.MAIL_SERVICE,
-            auth: {
-                user: appConfigs.MAIL_ADDRESS,
-                pass: appConfigs.MAIL_PASSWORD,
-            },
-        });
-
-        await transporter.sendMail({
-            from: appConfigs.MAIL_ADDRESS,
-            to,
-            subject,
-            text,
-            html,
-        });
-    } catch (err) {
-        throw ErrorResult.internal(err, null, "sendMail_tool");
-    }
 };
 
 /* ------------------------- generating random code ------------------------- */

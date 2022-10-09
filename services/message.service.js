@@ -82,12 +82,9 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
             message: informationBodyTaken.message,
         }
 
-        console.log(emailData, listOfUsersThatSaveInDatabase);
+        sendEmail(emailData, listOfUsersThatSaveInDatabase).catch(err => console.log(err))
 
-        sendEmail(emailData, listOfUsersThatSaveInDatabase)
-            .catch(err => console.log(err))
-
-        return listOfUsersThatSaveInDatabase
+        return listOfUsersThatSaveInDatabase;
     }
     else if (informationBodyTaken.type === "push_notification") {
         appConfigs.title = informationBodyTaken.title;
@@ -95,21 +92,28 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
 
         const newListForSaveInDatabase = []
         for (token of informationBodyTaken.user) {
-            newListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: token.userId, push_notification_token: token.push_notification_token } })
+            newListForSaveInDatabase.push({ 
+                ...informationBodyTaken, 
+                groupId: uniqueCode, 
+                user: { 
+                    userId: token.userId, 
+                    push_notification_token: token.push_notification_token 
+                } 
+            });
         }
-        const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase)
+        const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase);
 
-        pushNotification(listOfUsersThatSaveInDatabase)
+        pushNotification(listOfUsersThatSaveInDatabase);
 
-        return listOfUsersThatSaveInDatabase
+        return listOfUsersThatSaveInDatabase;
     }
     else if (informationBodyTaken.type === "inside_message") {
-        const newUserListForSaveInDatabase = []
+        const newUserListForSaveInDatabase = [];
         for (user of informationBodyTaken.user) {
             newUserListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
         }
-        const response = await InsideMessages.insertMany(newUserListForSaveInDatabase)
-        return response
+        const response = await InsideMessages.insertMany(newUserListForSaveInDatabase);
+        return response;
     }
 
 }

@@ -20,6 +20,7 @@ exports.asyncHandler = (fn) => async (req, res, next) => {
             err.message = await findMessage(err.messageCode, req.language.code);
         }
 
+        console.log(err)
         return BaseController.fail(
             res,
             ErrorResult.internal(err, null, functionName)

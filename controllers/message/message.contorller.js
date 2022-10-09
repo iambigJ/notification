@@ -53,7 +53,7 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
     };
 
     for (let user of users) {
-        if (!user.userId) {
+        if (user.userId === null || user.userId === undefined) {
             throw ErrorResult.badRequest('فیلد آی دی کاربر را پر کنید', 'userId_required');
         }
     }
