@@ -26,4 +26,4 @@ async function sendEmail(emailData, listOfUsersThatSaveInDatabase) {
     const listOfAcceptedEmail = info.accepted;
     await getListOfRecivers(listOfAcceptedEmail, listOfUsersThatSaveInDatabase);
 }
-module.exports = sendEmail 
+module.exports = sendEmail;
