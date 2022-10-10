@@ -4,34 +4,16 @@ const schema = mongoose.Schema
 
 const emailMessageSchema = schema({
     user: {
-        userId: {
-            type: String
-        },
-        email: {
-            type: String
-        }
+        userId: { type: String },
+        email: { type: String }
     },
-    title: {
-        type: String
-    },
-    message: {
-        type: String
-    },
-    groupId: {
-        type: String,
-    },
-    sent_date: {
-        type: Date,
-        default: null
-    },
-    sent: {
-        type: Boolean,
-        default: false
-    },
-    delivery: {
-        type: Boolean,
-        default: false
-    },
+    title: { type: String },
+    message: { type: String },
+    groupId: { type: String, },
+    sent_date: { type: Date, default: null },
+    sent: { type: Boolean, default: false },
+    delivery: { type: Boolean, default: false },
+    moreData: { type: Object },
 }, {
     timestamps: true,
     collection: 'emailMessages'

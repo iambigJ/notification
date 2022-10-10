@@ -8,7 +8,7 @@ const { pushNotification } = require('../tools/pushNotification.tools')
 
 
 /* ----------------------------- GET MESSAGES LIST ----------------------------- */
-exports.geMessageslist_Services = async (queries) => {
+exports.geMessagesList_Services = async (queries) => {
 
     const match = {}
     if (queries.userId) {
@@ -35,32 +35,32 @@ exports.geMessageslist_Services = async (queries) => {
     if (queries.fromDate && queries.toDate) {
         match.createdAt = { $gte: new Date(queries.fromDate), $lte: new Date(queries.toDate) }
     }
-    if (queries.type === "inside_message") {
-        const getMessages = await InsideMessages
+
+    let modelToSearch = null;
+    let getMessages = [];
+    let total = 0;
+
+    if (queries.type === "email") modelToSearch = EmailMessages;
+    else if (queries.type === "inside_message") modelToSearch = InsideMessages;
+    else if (queries.type === "push_notification") modelToSearch = Notification;
+
+    if(modelToSearch){
+        getMessages = await modelToSearch
             .find(match)
             .limit(queries.take)
             .skip(queries.page * queries.take)
-            .sort({ createdAt: queries.sort })
-        return { getMessages, total: getMessages.length }
-    }
-    if (queries.type === "email") {
-        const getMessages = await EmailMessages
-            .find(match)
-            .limit(queries.take)
-            .skip(queries.page * queries.take)
-            .sort({ createdAt: queries.sort })
-        return { getMessages, total: getMessages.length }
-    }
-    if (queries.type === "push_notification") {
-        const getMessages = await Notification
-            .find(match)
-            .limit(queries.take)
-            .skip(queries.page * queries.take)
-            .sort({ createdAt: queries.sort })
-        return { getMessages, total: getMessages.length }
+            .sort({ createdAt: queries.sort });
+
+        total = await modelToSearch.countDocuments(match);
+        if(queries.updateSeen){
+            await modelToSearch.updateMany(
+                { _id: { $in: getMessages.map(item => item._id.toString()) }, seen: false },
+                { $set: { seen: true, seen_date: new Date() } },
+            )
+        }
     }
 
-    return "لطفا یکی از تایپ های مورد نظر را انتخاب کنید"
+    return { getMessages, total }
 }
 
 /* -------------------------- SEND MESSAGE TO USER -------------------------- */
@@ -73,7 +73,12 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
         var emails = []
         for (user of informationBodyTaken.user) {
             emails.push(user.email)
-            newUserIdList.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
+            newUserIdList.push({
+                ...informationBodyTaken,
+                groupId: uniqueCode,
+                user: { userId: user.userId, email: user.email },
+                moreData: informationBodyTaken.moreData,
+            })
         }
         const listOfUsersThatSaveInDatabase = await EmailMessages.insertMany(newUserIdList)
         const emailData = {
@@ -92,13 +97,14 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
 
         const newListForSaveInDatabase = []
         for (token of informationBodyTaken.user) {
-            newListForSaveInDatabase.push({ 
-                ...informationBodyTaken, 
-                groupId: uniqueCode, 
-                user: { 
-                    userId: token.userId, 
-                    push_notification_token: token.push_notification_token 
-                } 
+            newListForSaveInDatabase.push({
+                ...informationBodyTaken,
+                groupId: uniqueCode,
+                moreData: informationBodyTaken.moreData,
+                user: {
+                    userId: token.userId,
+                    push_notification_token: token.push_notification_token
+                }
             });
         }
         const listOfUsersThatSaveInDatabase = await Notification.insertMany(newListForSaveInDatabase);
@@ -110,13 +116,18 @@ exports.addNewMessage_Services = async (informationBodyTaken) => {
     else if (informationBodyTaken.type === "inside_message") {
         const newUserListForSaveInDatabase = [];
         for (user of informationBodyTaken.user) {
-            newUserListForSaveInDatabase.push({ ...informationBodyTaken, groupId: uniqueCode, user: { userId: user.userId, email: user.email } })
+            newUserListForSaveInDatabase.push({
+                ...informationBodyTaken,
+                groupId: uniqueCode,
+                moreData: informationBodyTaken.moreData,
+                user: { userId: user.userId, email: user.email }
+            });
         }
         const response = await InsideMessages.insertMany(newUserListForSaveInDatabase);
         return response;
     }
-
 }
+
 /* ------------------------ Create token from client ------------------------ */
 exports.createTokenFromClient_Services = async (token) => {
 

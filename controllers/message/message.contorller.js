@@ -1,9 +1,9 @@
 const messageService = require('../../services/message.service')
-const ErrorResult = require('../../tools/error.tool')
+const ErrorResult = require('../../tools/error.tool');
+const { getDataFromReqQuery } = require('../../tools/general.tool');
 const BaseController = require('../Base.controller')
 
 exports.doGeMessagesListGET_Controller = async (req, res) => {
-
     const {
         userId,
         email,
@@ -14,8 +14,12 @@ exports.doGeMessagesListGET_Controller = async (req, res) => {
         fromDate,
         toDate,
         sort,
-        groupId
-    } = req.query
+        groupId,
+        page = 1,
+        take = 10,
+        updateSeen = false
+    } = getDataFromReqQuery(req.query);
+
     const queries = {
         userId,
         email,
@@ -25,14 +29,15 @@ exports.doGeMessagesListGET_Controller = async (req, res) => {
         sent,
         fromDate,
         toDate,
-        page: parseInt(req.query.page - 1),
-        take: parseInt(req.query.take) || 10,
         sort,
-        groupId
+        groupId,
+        updateSeen,
+        page: parseInt(page - 1),
+        take: parseInt(take) || 10,
     }
 
-    const result = await messageService.geMessageslist_Services(queries)
-    BaseController.ok(res, result)
+    const result = await messageService.geMessagesList_Services(queries)
+    return BaseController.ok(res, result)
 }
 
 exports.doAddNewMessagePOST_Controller = async (req, res) => {
@@ -42,6 +47,7 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         title,
         message,
         push_notification_service,
+        moreData,
     } = req.body;
 
     const informationBodyTaken = {
@@ -50,6 +56,7 @@ exports.doAddNewMessagePOST_Controller = async (req, res) => {
         title,
         message,
         push_notification_service,
+        moreData
     };
 
     for (let user of users) {

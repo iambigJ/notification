@@ -4,30 +4,14 @@ const schema = mongoose.Schema
 
 const insideMessageSchema = schema({
     user: {
-        userId: {
-            type: String
-        },
-        email: {
-            type: String
-        }
+        userId: { type: String },
     },
-    title: {
-        type: String
-    },
-    message: {
-        type: String
-    },
-    groupId: {
-        type: String,
-    },
-    seen_date: {
-        type: Date,
-        default: null
-    },
-    seen: {
-        type: Boolean,
-        default: false
-    }
+    title: { type: String },
+    message: { type: String },
+    groupId: { type: String, },
+    seen_date: { type: Date, default: null },
+    seen: { type: Boolean, default: false },
+    moreData: { type: Object },
 }, {
     timestamps: true,
     collection: 'inside_messages'
