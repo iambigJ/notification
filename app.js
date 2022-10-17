@@ -47,7 +47,7 @@ app.post('/', async (req, res) => {
 /* ----------------------------- Log Store Setup ---------------------------- */
 if (appConfigs.SHOW_LOG === "store" || appConfigs.SHOW_LOG === "full") {
     if (!fs.existsSync(path.join(__dirname, "logs", "access"))) {
-        fs.mkdirSync(path.join(__dirname, "logs", "access"));
+        fs.mkdirSync(path.join(__dirname, "logs", "access"), { recursive: true });
     }
 
     const accessLogStream = rfs.createStream("access.log", {

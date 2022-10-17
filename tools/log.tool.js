@@ -11,10 +11,10 @@ exports.logError = (section, error) => {
         console.log(error);
 
         if (!fs.existsSync(path.join(__dirname, "../logs"))) {
-            fs.mkdirSync(path.join(__dirname, "../logs"));
+            fs.mkdirSync(path.join(__dirname, "../logs"), { recursive: true });
         }
         if (!fs.existsSync(path.join(__dirname, "../logs/errors"))) {
-            fs.mkdirSync(path.join(__dirname, "../logs/errors"));
+            fs.mkdirSync(path.join(__dirname, "../logs/errors"), { recursive: true });
         }
         fs.appendFile(
             path.join(
@@ -49,11 +49,11 @@ exports.logSqlQuery = (sql, timing, name = "default") => {
         }
 
         if (!fs.existsSync(path.join(__dirname, "../logs"))) {
-            fs.mkdirSync(path.join(__dirname, "../logs"));
+            fs.mkdirSync(path.join(__dirname, "../logs"), { recursive: true });
         }
 
         if (!fs.existsSync(path.join(__dirname, "../logs/query"))) {
-            fs.mkdirSync(path.join(__dirname, "../logs/query"));
+            fs.mkdirSync(path.join(__dirname, "../logs/query"), { recursive: true });
         }
         fs.appendFile(
             path.join(
